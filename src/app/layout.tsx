@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import Header from "@/components/layout/Header";
 import { clerkAppearance } from "@/lib/clerkAppearance";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const openSauceSans = localFont({
@@ -13,9 +14,7 @@ const openSauceSans = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  ),
+  metadataBase: getSiteUrl(),
 
   title: {
     default: "Holdytic — Live Prediction Market Signals",
