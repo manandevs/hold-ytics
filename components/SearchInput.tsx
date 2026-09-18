@@ -1,48 +1,64 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+
+import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Search, X } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { FaFilter } from "react-icons/fa";
-import { VscSearchSparkle } from "react-icons/vsc";
-import { gsap } from "gsap";
 
 export function SearchInput({ className }: { className?: string }) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const iconRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const activeQuery = searchParams.get("q") ?? "";
 
-  useEffect(() => {
-    if (iconRef.current) gsap.from(iconRef.current, { opacity: 0, scale: 0.8, duration: 0.8, ease: "elastic.out(1, 0.5)" });
-    if (inputRef.current) gsap.from(inputRef.current, { x: 50, opacity: 0, duration: 0.7, delay: 0.2, ease: "power3.out" });
-  }, []);
+  const [query, setQuery] = useState(activeQuery);
+  const [syncedQuery, setSyncedQuery] = useState(activeQuery);
+
+  // Keep the field in step with the URL (back/forward, or a link with ?q=).
+  if (activeQuery !== syncedQuery) {
+    setSyncedQuery(activeQuery);
+    setQuery(activeQuery);
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/markets?q=${encodeURIComponent(query.trim())}`);
-    } else {
-      router.push(`/markets`);
-    }
+    const trimmed = query.trim();
+    router.push(trimmed ? `/?q=${encodeURIComponent(trimmed)}` : "/");
+  };
+
+  const handleClear = () => {
+    setQuery("");
+    if (activeQuery) router.push("/");
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("flex items-center bg-[#010201] rounded-md py-1.5 px-2 space-x-2", className)}>
-      <div ref={iconRef}>
-        <VscSearchSparkle size={18} className="text-white shrink-0" />
-      </div>
+    <form
+      onSubmit={handleSubmit}
+      role="search"
+      className={cn(
+        "flex items-center bg-zinc-100 border border-zinc-200 rounded-lg py-1.5 px-2.5 gap-2",
+        "transition-colors focus-within:bg-white focus-within:border-zinc-400",
+        className
+      )}
+    >
+      <Search size={16} className="text-zinc-500 shrink-0" aria-hidden />
       <input
-        ref={inputRef}
+        type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search markets..."
-        className="flex-1 bg-transparent text-white outline-none placeholder:text-gray-500 text-sm"
-        onFocus={() => gsap.to(inputRef.current, { scale: 1.02, duration: 0.2, ease: "power1.out" })}
-        onBlur={() => gsap.to(inputRef.current, { scale: 1, duration: 0.2, ease: "power1.out" })}
+        aria-label="Search markets"
+        className="flex-1 min-w-0 bg-transparent text-zinc-900 outline-none placeholder:text-zinc-500 text-sm [&::-webkit-search-cancel-button]:hidden"
       />
-      <button type="button" className="flex items-center justify-center w-7 h-7 rounded-lg bg-linear-to-b from-[#161329] via-black to-[#1d1b4b] shrink-0">
-        <FaFilter size={14} className="text-white" />
-      </button>
+      {query && (
+        <button
+          type="button"
+          onClick={handleClear}
+          aria-label="Clear search"
+          className="flex items-center justify-center size-5 rounded text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer"
+        >
+          <X size={14} />
+        </button>
+      )}
     </form>
   );
 }

@@ -1,40 +1,61 @@
 "use client";
-import React, { useState } from "react";
-import { Market } from "@/types/market";
+
+import React from "react";
+import { SearchX } from "lucide-react";
+import { MarketSummary } from "@/types/market";
 import { useMarkets } from "@/hooks/useMarkets";
-import { useSearchParams } from "next/navigation";
-import Card from "./card";
+import MarketCard from "./MarketCard";
+import MarketsGridSkeleton from "./MarketsGridSkeleton";
 
 interface MarketsGridProps {
-  initialMarkets: Market[];
+  initialMarkets: MarketSummary[];
+  /** The active search term, kept in sync with the server-rendered results. */
+  query?: string;
+  /** The active category tag, kept in sync with the server-rendered results. */
+  tagId?: number | null;
+  limit?: number;
 }
 
-export default function MarketsGrid({ initialMarkets }: MarketsGridProps) {
-  // Pass initial data to hydrate immediately, then poll every 15s
-  const { markets } = useMarkets(initialMarkets, 50); 
-  
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("q")?.toLowerCase() || "";
+export default function MarketsGrid({
+  initialMarkets,
+  query = "",
+  tagId = null,
+  limit = 50,
+}: MarketsGridProps) {
+  const { markets, loading, error } = useMarkets({ initialMarkets, limit, query, tagId });
 
-  // Client-side filtering
-  const filteredMarkets = markets.filter(market => 
-    market.question.toLowerCase().includes(searchQuery) ||
-    market.category?.toLowerCase().includes(searchQuery)
-  );
+  if (loading && markets.length === 0) return <MarketsGridSkeleton />;
+
+  if (markets.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 px-6 text-center bg-white rounded-3xl border border-zinc-200">
+        <SearchX size={40} className="text-zinc-400 mb-4" aria-hidden />
+        <h2 className="text-xl font-bold text-zinc-900 mb-2">No markets found</h2>
+        <p className="font-medium text-zinc-600">
+          {query
+            ? `Nothing matched “${query}”. Try a different search.`
+            : "No open markets in this category right now."}
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
-      {filteredMarkets.length > 0 ? (
-        filteredMarkets.map((market) => (
-          <Card key={market.id} market={market} />
-        ))
-      ) : (
-        <div className="col-span-full flex flex-col items-center justify-center py-24 text-zinc-500 bg-white rounded-3xl border border-zinc-200">
-          <div className="text-4xl mb-4">🔍</div>
-          <h3 className="text-xl font-bold text-zinc-900 mb-2">No markets found</h3>
-          <p className="font-medium">Try adjusting your search query.</p>
-        </div>
+    <>
+      {error && (
+        <p
+          role="status"
+          className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800"
+        >
+          {error} Showing the most recent data.
+        </p>
       )}
-    </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+        {markets.map((market) => (
+          <MarketCard key={market.id} market={market} />
+        ))}
+      </div>
+    </>
   );
 }
