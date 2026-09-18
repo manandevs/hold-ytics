@@ -28,8 +28,8 @@ export default function ContactPage() {
       <ul>
         <li>
           <strong>Trades, balances and withdrawals.</strong> {SITE_NAME} is a read-only view
-          of public data — it holds no funds and has no accounts. Anything to do with a
-          position or a wallet has to go to Polymarket support.
+          of public data — it holds no funds and never connects to a wallet. Anything to
+          do with a position or a wallet has to go to Polymarket support.
         </li>
         <li>
           <strong>How a market will resolve.</strong> Resolution is decided by Polymarket

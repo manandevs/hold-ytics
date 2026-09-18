@@ -4,7 +4,7 @@ import { CONTACT_EMAIL, POLICY_UPDATED, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: `How ${SITE_NAME} handles data. There are no accounts, no analytics and no tracking cookies.`,
+  description: `How ${SITE_NAME} handles data: optional accounts, no analytics and no tracking cookies.`,
 };
 
 export default function PrivacyPage() {
@@ -14,18 +14,18 @@ export default function PrivacyPage() {
       <p className="!mt-2 text-sm !text-zinc-500">Last updated {POLICY_UPDATED}</p>
 
       <p>
-        Short version: {SITE_NAME} has no accounts, sets no tracking cookies, runs no
-        analytics and asks you for nothing. This page describes the little data that is
-        involved anyway.
+        Short version: browsing {SITE_NAME} needs no account. If you choose to create one,
+        we keep only what signing in requires. We set no tracking cookies and run no
+        analytics. This page describes the data that is involved.
       </p>
 
       <h2>What we do not collect</h2>
 
       <ul>
-        <li>No sign-up, login, profile or wallet connection — so no account data exists.</li>
+        <li>No wallet connection, trading history or financial information.</li>
         <li>No tracking or advertising cookies, and no third-party analytics scripts.</li>
         <li>No cross-site tracking, fingerprinting, profiling or ad targeting.</li>
-        <li>We do not sell, rent or share personal information, because we do not hold any.</li>
+        <li>We do not sell or rent personal information, or share it for advertising.</li>
       </ul>
 
       <h2>What happens when you use the site</h2>
@@ -38,6 +38,20 @@ export default function PrivacyPage() {
         for security, abuse prevention and debugging. We do not use these logs to build
         profiles, and they are retained only as long as the provider&apos;s normal
         operational needs require.
+      </p>
+
+      <h3>Accounts</h3>
+
+      <p>
+        Creating an account is optional. Sign-in is handled by our authentication provider,
+        Clerk, which stores your email address, the sign-in method you choose, and any name
+        or profile image you add. Passwords are processed by Clerk and never reach our
+        servers. Clerk&apos;s own privacy policy applies to that data.
+      </p>
+
+      <p>
+        Signing in sets strictly necessary session cookies so you stay signed in between
+        pages. They are not used for tracking or advertising, and signing out clears them.
       </p>
 
       <h3>Requests to Polymarket</h3>
@@ -58,16 +72,16 @@ export default function PrivacyPage() {
 
       <p>
         Searches and category filters are held in the page URL and sent to our server to
-        fetch matching markets. They are not stored against any identity, because there is
-        no identity to store them against.
+        fetch matching markets. They are not stored against your account.
       </p>
 
       <h3>Fonts and assets</h3>
 
       <p>
-        The site&apos;s typeface is self-hosted and served from our own domain. No fonts,
-        stylesheets or scripts are loaded from third-party CDNs, so no third party sees your
-        visit.
+        The site&apos;s typeface and stylesheets are self-hosted and served from our own
+        domain. The one third-party script is Clerk&apos;s sign-in library, which loads on
+        every page so the account controls work; Clerk therefore receives standard request
+        information, such as your IP address, when a page loads.
       </p>
 
       <h2>Clipboard and the contact form</h2>
@@ -88,9 +102,9 @@ export default function PrivacyPage() {
 
       <p>
         Depending on where you live you may have rights to access, correct or delete
-        personal data held about you, or to object to its processing. Since the only
-        personal data we might hold is an email you chose to send us, such a request is
-        usually a matter of asking us to delete that correspondence — write to{" "}
+        personal data held about you, or to object to its processing. The personal data we
+        hold is your account details, if you created an account, and any email you chose to
+        send us. To access or delete either, write to{" "}
         <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will action it.
       </p>
 

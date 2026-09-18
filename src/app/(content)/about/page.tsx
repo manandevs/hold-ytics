@@ -51,8 +51,9 @@ export default function AboutPage() {
       <h2>What it does not do</h2>
 
       <p>
-        {SITE_NAME} places no orders, holds no funds and has no accounts. There is no
-        wallet connection, no sign-up and no portfolio. Where an action needs a funded
+        {SITE_NAME} places no orders and holds no funds. There is no wallet connection
+        and no portfolio, and an account only signs you in — browsing needs none. Where an
+        action needs a funded
         Polymarket account — placing a trade, posting a comment, bookmarking a market — the
         site links out to Polymarket instead of imitating the feature.
       </p>
@@ -65,9 +66,9 @@ export default function AboutPage() {
       <h2>Privacy in one sentence</h2>
 
       <p>
-        The site has no accounts, no analytics and no tracking cookies, and it collects no
-        personal information. The <Link href="/privacy">Privacy Policy</Link> spells out
-        the detail.
+        Browsing needs no account, and the site runs no analytics and sets no tracking
+        cookies; if you do create an account, sign-in is handled by Clerk. The{" "}
+        <Link href="/privacy">Privacy Policy</Link> spells out the detail.
       </p>
 
       <h2>Built with</h2>

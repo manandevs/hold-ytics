@@ -11,7 +11,7 @@ export const SITE_NAME = "Holdytic";
 export const CONTACT_EMAIL = "contact@holdytic.com";
 
 /** Shown as "Last updated" on the Terms and Privacy pages. */
-export const POLICY_UPDATED = "September 17, 2026";
+export const POLICY_UPDATED = "September 18, 2026";
 
 /** Every page reachable from the header menu, in display order. */
 export const NAV_LINKS = [

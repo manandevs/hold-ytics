@@ -28,9 +28,15 @@ export default function TermsPage() {
 
       <p>
         The site is not a broker, exchange, market maker or custodian. It does not accept
-        deposits, hold funds, execute orders or maintain user accounts. Where an action
+        deposits, hold funds, execute orders or hold trading accounts. Where an action
         requires a funded Polymarket account, the site links to Polymarket and the
         transaction happens entirely there, under Polymarket&apos;s own terms.
+      </p>
+
+      <p>
+        Creating a {SITE_NAME} account is optional. It only signs you in, is handled by our
+        authentication provider, Clerk, and gives no access to trading or funds. You are
+        responsible for keeping your sign-in details secure.
       </p>
 
       <h2>2. Not financial advice</h2>
