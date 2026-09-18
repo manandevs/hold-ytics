@@ -8,9 +8,15 @@ interface CategoryNavProps {
   active: string;
   /** Preserved so switching category keeps an in-flight search. */
   query?: string;
+  /** Route the tabs link to. */
+  basePath?: string;
 }
 
-export default function CategoryNav({ active, query }: CategoryNavProps) {
+export default function CategoryNav({
+  active,
+  query,
+  basePath = "/markets",
+}: CategoryNavProps) {
   return (
     <nav
       aria-label="Market categories"
@@ -22,7 +28,7 @@ export default function CategoryNav({ active, query }: CategoryNavProps) {
           const params = new URLSearchParams();
           if (category.tagId !== null) params.set("category", category.slug);
           if (query) params.set("q", query);
-          const href = params.size ? `/?${params}` : "/";
+          const href = params.size ? `${basePath}?${params}` : basePath;
 
           return (
             <li key={category.slug}>

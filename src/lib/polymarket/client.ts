@@ -17,14 +17,23 @@ export const REVALIDATE_SECONDS = 30;
 export const MAX_LIMIT = 100;
 
 /**
+ * Cache window for the accuracy study. It replays hundreds of upstream calls,
+ * and resolved-market history does not change, so it is cached for hours.
+ */
+export const ACCURACY_REVALIDATE_SECONDS = 21_600;
+
+/**
  * Fetch and parse JSON, resolving to `null` on any failure.
  *
  * Callers turn that `null` into an empty result so one unavailable upstream
  * endpoint degrades a single panel instead of breaking the page.
  */
-export async function fetchJson<T>(url: string): Promise<T | null> {
+export async function fetchJson<T>(
+  url: string,
+  revalidate: number = REVALIDATE_SECONDS
+): Promise<T | null> {
   try {
-    const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS } });
+    const res = await fetch(url, { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {

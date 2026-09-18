@@ -22,12 +22,12 @@ export function SearchInput({ className }: { className?: string }) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = query.trim();
-    router.push(trimmed ? `/?q=${encodeURIComponent(trimmed)}` : "/");
+    router.push(trimmed ? `/markets?q=${encodeURIComponent(trimmed)}` : "/markets");
   };
 
   const handleClear = () => {
     setQuery("");
-    if (activeQuery) router.push("/");
+    if (activeQuery) router.push("/markets");
   };
 
   return (

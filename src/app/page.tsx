@@ -1,28 +1,21 @@
 import { Suspense } from "react";
-import { findCategory, getFeaturedMarket, getMarkets } from "@/lib/polymarket/markets";
-import CategoryNav from "@/components/markets/home/CategoryNav";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { getFeaturedMarket, getMarkets } from "@/lib/polymarket/markets";
 import FeaturedMarket from "@/components/markets/home/FeaturedMarket";
 import HotTopics from "@/components/markets/home/HotTopics";
-import MarketGrid from "@/components/markets/home/MarketGrid";
+import MarketCard from "@/components/markets/MarketCard";
 import MarketGridSkeleton from "@/components/markets/home/MarketGridSkeleton";
-const MARKET_LIMIT = 40;
+import { buttonStyles } from "@/components/ui/Button";
+
+// Four rows of the four-column grid; the full list lives on /markets.
+const PREVIEW_COUNT = 16;
 const HOT_TOPIC_LIMIT = 5;
 
-/** Suspended so the category bar paints before the market data resolves. */
-async function MarketsSection({ query, tagId }: { query: string; tagId: number | null }) {
-  const initialMarkets = await getMarkets({ limit: MARKET_LIMIT, query, tagId });
+// Keep in sync with REVALIDATE_SECONDS in lib/polymarket/client.ts.
+export const revalidate = 30;
 
-  return (
-    <MarketGrid
-      initialMarkets={initialMarkets}
-      query={query}
-      tagId={tagId}
-      limit={MARKET_LIMIT}
-    />
-  );
-}
-
-/** The featured chart and sidebar are independent of the active category. */
+/** The featured chart and the sidebar share one suspense boundary. */
 async function FeaturedSection() {
   const [featured, hotTopics] = await Promise.all([
     getFeaturedMarket(),
@@ -39,44 +32,60 @@ async function FeaturedSection() {
   );
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; category?: string }>;
-}) {
-  const { q, category } = await searchParams;
-  const query = q?.trim() ?? "";
-  const activeCategory = findCategory(category);
+async function TrendingSection() {
+  const markets = await getMarkets({ limit: PREVIEW_COUNT });
 
+  if (markets.length === 0) {
+    return (
+      <p className="rounded-2xl border border-zinc-200 bg-white p-8 text-center text-sm text-zinc-500">
+        Live markets are unavailable right now. Please refresh in a moment.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 items-stretch">
+      {markets.map((market) => (
+        <MarketCard key={market.id} market={market} />
+      ))}
+    </div>
+  );
+}
+
+export default function Home() {
   return (
     <main className="flex-1 bg-zinc-50 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Searching narrows the whole page, so the featured block steps aside. */}
-        {!query && (
-          <Suspense fallback={<div className="h-72 rounded-2xl bg-white border border-zinc-200 animate-pulse mb-10" />}>
-            <FeaturedSection />
-          </Suspense>
-        )}
-
-        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-          <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">
-            {query ? `Results for “${query}”` : "All markets"}
-          </h1>
-          {query && (
-            <p className="text-sm font-medium text-zinc-500">
-              Ranked by trading volume
-            </p>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <CategoryNav active={activeCategory.slug} query={query} />
-        </div>
-
-        {/* Keyed so a new query or category shows the skeleton again. */}
-        <Suspense key={`${query}|${activeCategory.slug}`} fallback={<MarketGridSkeleton />}>
-          <MarketsSection query={query} tagId={activeCategory.tagId} />
+        <Suspense
+          fallback={
+            <div className="h-72 rounded-2xl bg-white border border-zinc-200 animate-pulse mb-10" />
+          }
+        >
+          <FeaturedSection />
         </Suspense>
+
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-6">
+          <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">
+            Trending markets
+          </h1>
+          <Link
+            href="/markets"
+            className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            View all markets
+          </Link>
+        </div>
+
+        <Suspense fallback={<MarketGridSkeleton count={PREVIEW_COUNT} />}>
+          <TrendingSection />
+        </Suspense>
+
+        <div className="mt-10 flex justify-center">
+          <Link href="/markets" className={buttonStyles()}>
+            Browse all markets
+            <ArrowRight size={16} className="ml-2" aria-hidden />
+          </Link>
+        </div>
       </div>
     </main>
   );

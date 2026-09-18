@@ -1,20 +1,36 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
+import { Menu, X } from "lucide-react";
 
 import { SearchInput } from "@/components/layout/SearchInput";
+import { NAV_LINKS } from "@/lib/site";
+import { cn } from "@/lib/cn";
+
 /** Placeholder matching the search field's footprint while it hydrates. */
 function SearchFallback() {
   return <div className="h-9 w-full rounded-md bg-zinc-100 border border-zinc-200" />;
 }
 
 export default function Header() {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [syncedPathname, setSyncedPathname] = useState(pathname);
+
+  // Close the menu on navigation so it never outlives the route.
+  if (pathname !== syncedPathname) {
+    setSyncedPathname(pathname);
+    setMenuOpen(false);
+  }
+
   const headerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const searchWrapperRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // --- Entrance animations ---
   useEffect(() => {
@@ -37,11 +53,30 @@ export default function Header() {
           ease: "power2.out",
         });
       }
-
     }, headerRef);
 
     return () => ctx.revert();
   }, []);
+
+  // Dismiss the compact menu on Escape or a click outside it.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    const handlePointerDown = (e: PointerEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [menuOpen]);
 
   return (
     <header
@@ -72,6 +107,44 @@ export default function Header() {
           </Suspense>
         </div>
 
+        <div ref={menuRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="site-menu"
+            className="flex items-center justify-center size-9 rounded-lg border border-zinc-200 bg-white text-zinc-700 transition-colors hover:text-zinc-900 hover:border-zinc-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#57c]"
+          >
+            {menuOpen ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
+          </button>
+
+          {/* Rendered even while closed so the links stay in the HTML for
+              crawlers and no-JS readers; `hidden` keeps them out of the tab
+              order and the accessibility tree until the menu opens. */}
+          <nav
+            id="site-menu"
+            aria-label="Site pages"
+            hidden={!menuOpen}
+            className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white shadow-lg p-1.5 flex flex-col"
+          >
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                  pathname === link.href
+                    ? "bg-zinc-100 text-zinc-900"
+                    : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );
