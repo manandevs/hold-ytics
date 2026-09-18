@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  getComments,
-  getHolders,
-  getMarketById,
-  getOrderBook,
-  getPriceHistory,
-  getRelatedMarkets,
-  getTrades,
-  parseTokenIds,
-  polymarketUrl,
-} from "@/lib/api";
+import { getComments, getHolders, getOrderBook, getTrades } from "@/lib/polymarket/activity";
+import { getMarketById, getRelatedMarkets, parseTokenIds, polymarketUrl } from "@/lib/polymarket/markets";
+import { getPriceHistory } from "@/lib/polymarket/prices";
 import { parseOutcomes } from "@/lib/format";
-import { DEFAULT_INTERVAL } from "@/lib/intervals";
-import MarketDetail from "@/components/MarketDetail";
-
+import { DEFAULT_INTERVAL } from "@/lib/polymarket/prices";
+import MarketDetail from "@/components/markets/detail/MarketDetail";
 // Data freshness is handled by the fetch-level revalidate in lib/api.ts.
 type PageProps = { params: Promise<{ id: string }> };
 

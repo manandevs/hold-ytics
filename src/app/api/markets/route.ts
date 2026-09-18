@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getMarkets, REVALIDATE_SECONDS } from "@/lib/api";
-
+import { REVALIDATE_SECONDS } from "@/lib/polymarket/client";
+import { getMarkets } from "@/lib/polymarket/markets";
 /**
  * Live market feed used by the client-side poller. Mirrors the parameters of
  * `getMarkets` so the client can refresh the exact slice the server rendered.

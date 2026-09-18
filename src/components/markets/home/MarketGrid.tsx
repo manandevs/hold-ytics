@@ -4,10 +4,9 @@ import React from "react";
 import { SearchX } from "lucide-react";
 import { MarketSummary } from "@/types/market";
 import { useMarkets } from "@/hooks/useMarkets";
-import MarketCard from "./MarketCard";
-import MarketsGridSkeleton from "./MarketsGridSkeleton";
-
-interface MarketsGridProps {
+import MarketCard from "@/components/markets/MarketCard";
+import MarketGridSkeleton from "@/components/markets/home/MarketGridSkeleton";
+interface MarketGridProps {
   initialMarkets: MarketSummary[];
   /** The active search term, kept in sync with the server-rendered results. */
   query?: string;
@@ -16,15 +15,15 @@ interface MarketsGridProps {
   limit?: number;
 }
 
-export default function MarketsGrid({
+export default function MarketGrid({
   initialMarkets,
   query = "",
   tagId = null,
   limit = 50,
-}: MarketsGridProps) {
+}: MarketGridProps) {
   const { markets, loading, error } = useMarkets({ initialMarkets, limit, query, tagId });
 
-  if (loading && markets.length === 0) return <MarketsGridSkeleton />;
+  if (loading && markets.length === 0) return <MarketGridSkeleton />;
 
   if (markets.length === 0) {
     return (

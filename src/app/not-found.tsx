@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { buttonStyles } from "@/components/Button";
-
+import { buttonStyles } from "@/components/ui/Button";
 export default function NotFound() {
   return (
     <main className="flex-1 min-h-screen bg-zinc-50 flex flex-col items-center justify-center gap-6 px-4 text-center">

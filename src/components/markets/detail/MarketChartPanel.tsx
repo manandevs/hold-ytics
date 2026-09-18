@@ -2,10 +2,9 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { OutcomeSeries, PricePoint } from "@/types/market";
-import { DEFAULT_INTERVAL, INTERVALS, Interval } from "@/lib/intervals";
+import { DEFAULT_INTERVAL, INTERVALS, Interval } from "@/lib/polymarket/prices";
 import { cn } from "@/lib/cn";
-import PriceChart from "./PriceChart";
-
+import PriceChart from "@/components/markets/PriceChart";
 interface MarketChartPanelProps {
   /** Server-rendered series for the default interval. */
   initialSeries: OutcomeSeries[];

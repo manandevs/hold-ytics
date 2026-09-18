@@ -21,13 +21,13 @@ import {
   formatPercent,
   toNumber,
 } from "@/lib/format";
-import MarketChartPanel from "./MarketChartPanel";
-import OrderBookPanel from "./OrderBookPanel";
-import MarketActivityTabs from "./MarketActivityTabs";
-import MarketFaq from "./MarketFaq";
-import TradePanel from "./TradePanel";
-import RelatedMarkets from "./RelatedMarkets";
-import ShareButton from "./ShareButton";
+import MarketChartPanel from "@/components/markets/detail/MarketChartPanel";
+import OrderBookPanel from "@/components/markets/detail/OrderBookPanel";
+import MarketActivityTabs from "@/components/markets/detail/MarketActivityTabs";
+import MarketFaq from "@/components/markets/detail/MarketFaq";
+import TradePanel from "@/components/markets/detail/TradePanel";
+import RelatedMarkets from "@/components/markets/detail/RelatedMarkets";
+import CopyLinkButton from "@/components/ui/CopyLinkButton";
 import { MarketSummary } from "@/types/market";
 
 export interface MarketDetailProps {
@@ -143,7 +143,7 @@ export default function MarketDetail({
                   </p>
                 </div>
 
-                <ShareButton />
+                <CopyLinkButton />
               </div>
 
               {/* Summary strip */}

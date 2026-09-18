@@ -36,19 +36,55 @@ No API keys or environment variables are required — the Gamma API is public.
 The home page accepts `?q=` (search) and `?category=` (one of the slugs in
 `CATEGORIES`). Both are resolved server-side and handed to the grid as initial data.
 
+## Project structure
+
+Application code lives under `src/`; only configuration sits at the repo root.
+
+```
+src/
+├── app/                         # routes only — no business logic
+│   ├── api/
+│   │   ├── markets/             # live market feed for the client poller
+│   │   └── price-history/       # price series for the chart range picker
+│   ├── markets/[id]/            # market detail route
+│   ├── error.tsx  layout.tsx  not-found.tsx  page.tsx
+│   └── globals.css  icon.png
+├── components/
+│   ├── layout/                  # site chrome: Header, SearchInput
+│   ├── markets/                 # the market domain
+│   │   ├── home/                # home-page composition
+│   │   ├── detail/              # detail-page composition
+│   │   ├── MarketCard.tsx       # shared by both routes
+│   │   └── PriceChart.tsx       # shared by both routes
+│   └── ui/                      # domain-agnostic primitives
+├── hooks/                       # useMarkets (live polling)
+├── lib/
+│   ├── cn.ts  format.ts         # generic helpers
+│   └── polymarket/              # the only code that talks to Polymarket
+│       ├── client.ts            # base URLs, fetch policy, caching
+│       ├── markets.ts           # markets, categories, featured, related
+│       ├── prices.ts            # price history + chart intervals
+│       └── activity.ts          # order book, comments, holders, trades
+└── types/market.ts              # domain types
+```
+
+Conventions: components are `PascalCase.tsx`, everything else `camelCase.ts`,
+folders are lowercase. All cross-folder imports use the `@/*` alias, which maps
+to `src/*` — so moving a file never rewrites a relative path chain.
+
 ## Architecture
 
-- **`lib/api.ts`** is the only place that talks to Polymarket. `getMarkets()` lists open
-  markets ordered by 24h volume, or routes free-text queries to the public search
-  endpoint. `getMarketById()` fetches a single market. Upstream failures resolve to empty
-  results so a page renders an empty state instead of crashing.
+- **`lib/polymarket/` is the only place that talks to Polymarket.** `client.ts` owns the
+  base URLs, the 30s cache window and the failure policy; the other three modules are split
+  by responsibility and share it. Upstream failures resolve to empty results, so a page
+  renders an empty state instead of crashing.
 - **Two market shapes.** `MarketSummary` is a small projection (id, question, image, the
   two displayed outcomes, volume, end date) used by every list view; `Market` is the full
   object and is only used on the detail page. Projecting lists server-side keeps the
   serialized payload roughly a quarter of its raw size.
 - **`lib/format.ts`** normalises the API's mixed string/number fields and renders every
   displayed value, so missing data shows an em dash rather than `$undefined`.
-- **Categories are real.** `CATEGORIES` in `lib/api.ts` maps each tab to a Polymarket tag
+- **Categories are real.** `CATEGORIES` in `lib/polymarket/markets.ts` maps each tab to a Polymarket tag
   id (resolved once from `/tags/slug/<slug>`), which is passed through as `tag_id`. Every
   tab issues its own query rather than re-sorting markets already on the page.
 - **Data flow.** Pages fetch on the server for the first paint; `useMarkets` then keeps the

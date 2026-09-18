@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Check, Link2 } from "lucide-react";
 
 /** Copies the current market URL to the clipboard. */
-export default function ShareButton() {
+export default function CopyLinkButton() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

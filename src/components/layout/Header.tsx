@@ -5,8 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import gsap from "gsap";
 
-import { SearchInput } from "./SearchInput";
-
+import { SearchInput } from "@/components/layout/SearchInput";
 /** Placeholder matching the search field's footprint while it hydrates. */
 function SearchFallback() {
   return <div className="h-9 w-full rounded-md bg-zinc-100 border border-zinc-200" />;

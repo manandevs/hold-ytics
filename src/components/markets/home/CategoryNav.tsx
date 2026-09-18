@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/api";
+import { CATEGORIES } from "@/lib/polymarket/markets";
 import { cn } from "@/lib/cn";
 
 interface CategoryNavProps {

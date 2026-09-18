@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getPriceHistory, REVALIDATE_SECONDS } from "@/lib/api";
-import { isInterval } from "@/lib/intervals";
-
+import { REVALIDATE_SECONDS } from "@/lib/polymarket/client";
+import { getPriceHistory } from "@/lib/polymarket/prices";
+import { isInterval } from "@/lib/polymarket/prices";
 /**
  * Price history for one CLOB token, used when the reader switches the chart's
  * time range. Tokens come straight from the market, so only the interval needs

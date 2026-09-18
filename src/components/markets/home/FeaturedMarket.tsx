@@ -1,10 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { FeaturedMarket as FeaturedMarketData } from "@/lib/api";
+import type { FeaturedMarket as FeaturedMarketData } from "@/lib/polymarket/markets";
 import { formatCurrency, formatDate } from "@/lib/format";
-import PriceChart from "./PriceChart";
-
+import PriceChart from "@/components/markets/PriceChart";
 export default function FeaturedMarket({ market, series }: FeaturedMarketData) {
   const hasChart = series.some((s) => s.points.length > 1);
 

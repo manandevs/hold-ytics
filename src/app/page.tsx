@@ -1,11 +1,10 @@
 import { Suspense } from "react";
-import { findCategory, getFeaturedMarket, getMarkets } from "@/lib/api";
-import CategoryNav from "@/components/CategoryNav";
-import FeaturedMarket from "@/components/FeaturedMarket";
-import HotTopics from "@/components/HotTopics";
-import MarketsGrid from "@/components/MarketsGrid";
-import MarketsGridSkeleton from "@/components/MarketsGridSkeleton";
-
+import { findCategory, getFeaturedMarket, getMarkets } from "@/lib/polymarket/markets";
+import CategoryNav from "@/components/markets/home/CategoryNav";
+import FeaturedMarket from "@/components/markets/home/FeaturedMarket";
+import HotTopics from "@/components/markets/home/HotTopics";
+import MarketGrid from "@/components/markets/home/MarketGrid";
+import MarketGridSkeleton from "@/components/markets/home/MarketGridSkeleton";
 const MARKET_LIMIT = 40;
 const HOT_TOPIC_LIMIT = 5;
 
@@ -14,7 +13,7 @@ async function MarketsSection({ query, tagId }: { query: string; tagId: number |
   const initialMarkets = await getMarkets({ limit: MARKET_LIMIT, query, tagId });
 
   return (
-    <MarketsGrid
+    <MarketGrid
       initialMarkets={initialMarkets}
       query={query}
       tagId={tagId}
@@ -75,7 +74,7 @@ export default async function Home({
         </div>
 
         {/* Keyed so a new query or category shows the skeleton again. */}
-        <Suspense key={`${query}|${activeCategory.slug}`} fallback={<MarketsGridSkeleton />}>
+        <Suspense key={`${query}|${activeCategory.slug}`} fallback={<MarketGridSkeleton />}>
           <MarketsSection query={query} tagId={activeCategory.tagId} />
         </Suspense>
       </div>
